@@ -20,20 +20,21 @@ namespace PFRanger
             handRanks = JsonConvert.DeserializeObject<HandRanks>(json) ?? throw new InvalidOperationException("Hand ranks data could not be loaded.");
         }
 
-        public List<string> GetTopHandsByScenario(string scenario, double topPercentage)
+        public bool IsHandInTopRange(Hand hand, int playersLeft, double topPercentage)
         {
-            var hands = scenario switch
+            string handNotation = hand.Notation();
+            var rankedHands = playersLeft switch
             {
-                "EquityVs1" => handRanks.EquityVs1,
-                "EquityVs2" => handRanks.EquityVs2,
-                "EquityVs3" => handRanks.EquityVs3,
-                "EquityVs4" => handRanks.EquityVs4,
-                "EquityVs5" => handRanks.EquityVs5,
-                _ => throw new ArgumentException("Invalid scenario", nameof(scenario)),
+                1 => handRanks.EquityVs1,
+                2 => handRanks.EquityVs2,
+                3 => handRanks.EquityVs3,
+                4 => handRanks.EquityVs4,
+                5 => handRanks.EquityVs5,
+                _ => throw new ArgumentException("Invalid number of players.", nameof(playersLeft)),
             };
 
-            int topCount = (int)(hands.Count * (topPercentage / 100.0));
-            return hands.Take(topCount).ToList();
+            int topCount = (int)(rankedHands.Count * (topPercentage / 100.0));
+            return rankedHands.Take(topCount).Contains(handNotation);
         }
     }
 

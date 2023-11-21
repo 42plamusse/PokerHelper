@@ -47,10 +47,21 @@ namespace PFRanger
             return Card1.Suit == Card2.Suit;
         }
 
+        public bool IsPair()
+        {
+            return Card1.Rank == Card2.Rank;
+        }
+
         public string Notation()
         {
-            var suitedNotation = IsSuited() ? "s" : "o";
-            return $"{Card1.Rank}{Card2.Rank}{suitedNotation}";
+            var highCard = Card1.Rank > Card2.Rank ? Card1 : Card2;
+            var lowCard = Card1.Rank > Card2.Rank ? Card2 : Card1;
+
+            var highRankNotation = RankNotations[highCard.Rank];
+            var lowRankNotation = RankNotations[lowCard.Rank];
+            var suitedNotation = IsSuited() ? "s" : (IsPair() ? "" : "o");
+
+            return $"{highRankNotation}{lowRankNotation}{suitedNotation}";
         }
 
         public override int GetHashCode()
